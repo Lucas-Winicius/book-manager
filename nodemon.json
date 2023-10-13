@@ -1,0 +1,13 @@
+{
+  "execMap": {
+      "ts": "node --loader ts-node/esm --experimental-specifier-resolution=node -r tsconfig-paths/register"
+  },
+  "ext": "ts",
+  "ignore": [
+      "node_modules",
+      "*.test.ts",
+      "volumes"
+  ],
+  "verbose": true,
+  "delay": "1000"
+}

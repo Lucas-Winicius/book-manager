@@ -1,0 +1,45 @@
+services:
+  api:
+    build: .
+    command: npm run start:dev
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./volumes/mongo:/data/db
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017/
+    depends_on:
+      - mongo
+
+
+  redis:
+    image: redis
+    command: redis-server --appendonly yes --save 7200 1
+    volumes:
+      - ./volumes/redis:/data
+    ports:
+      - 6379:6379
