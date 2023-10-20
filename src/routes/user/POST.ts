@@ -23,7 +23,13 @@ async function POST(req: Request, res: Response) {
   const createdUser = await User.create(sanitizedUser);
   const userToken = jsonWebToken.create(createdUser.data);
 
-  res.status(createdUser.status).json({ createdUser, userToken });
+  res
+    .cookie("UserAuthentication", userToken, {
+      path: "/",
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+    })
+    .status(createdUser.status)
+    .json({ createdUser, userToken });
 }
 
 export default POST;
