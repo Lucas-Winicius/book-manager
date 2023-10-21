@@ -15,6 +15,8 @@ function Authentication(req: Request, res: Response, next: NextFunction) {
     return res.status(response.status).json(response);
   }
 
+  req.body.user = user;
+
   next();
 }
 

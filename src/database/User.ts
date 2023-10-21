@@ -1,6 +1,7 @@
 import UserType from "../@types/UserType";
 import prisma from "../libs/prisma";
-import { success } from "../libs/responses";
+import redis from "../libs/redis";
+import { error, success } from "../libs/responses";
 
 class User {
   private queue: UserType[];
@@ -32,8 +33,55 @@ class User {
     return success({
       status: 202,
       message: "User added to the creation queue.",
-      data
+      data,
     });
+  }
+
+  async getFirst(param: string) {
+    const userCache = await redis.get(`user:${param}`);
+
+    if (userCache) {
+      const userJson = JSON.parse(userCache);
+
+      const response = success({
+        status: 200,
+        message: "User found successfully.",
+        data: userJson,
+      });
+
+      return response;
+    }
+
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: { contains: `${param}` } },
+          { name: { contains: `${param}`, mode: "insensitive" } },
+          { nick: { contains: `${param}`, mode: "insensitive" } },
+          { favorites: { has: `${param}` } },
+          { userHex: { contains: `${param}` } },
+        ],
+      },
+    });
+
+    if (user) {
+      redis.setEx(`user:${user.id}`, 3600, JSON.stringify(user));
+
+      const response = success({
+        status: 200,
+        message: "User found successfully.",
+        data: user,
+      });
+
+      return response;
+    }
+
+    const response = error({
+      status: 404,
+      message: `User not found. Please check the search criteria and try again.`,
+    });
+
+    return response;
   }
 }
 
