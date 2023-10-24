@@ -55,11 +55,11 @@ class User {
     const user = await prisma.user.findFirst({
       where: {
         OR: [
-          { id: { contains: `${param}` } },
-          { name: { contains: `${param}`, mode: "insensitive" } },
-          { nick: { contains: `${param}`, mode: "insensitive" } },
-          { favorites: { has: `${param}` } },
-          { userHex: { contains: `${param}` } },
+          { id: { contains: param } },
+          { name: { contains: param, mode: "insensitive" } },
+          { nick: { contains: param, mode: "insensitive" } },
+          { favorites: { has: param } },
+          { userHex: { contains: param } },
         ],
       },
     });
@@ -71,6 +71,41 @@ class User {
         status: 200,
         message: "User found successfully.",
         data: user,
+      });
+
+      return response;
+    }
+
+    const response = error({
+      status: 404,
+      message: `User not found. Please check the search criteria and try again.`,
+    });
+
+    return response;
+  }
+
+  async getMany(param: string) {
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { id: { contains: param } },
+          { name: { contains: param, mode: "insensitive" } },
+          { nick: { contains: param, mode: "insensitive" } },
+          { favorites: { has: param } },
+          { userHex: { contains: param } },
+        ],
+      },
+    });
+
+    if (users.length) {
+      users.forEach((user) =>
+        redis.setEx(`user:${user.id}`, 3600, JSON.stringify(user)),
+      );
+
+      const response = success({
+        status: 200,
+        message: "Users found successfully.",
+        data: users,
       });
 
       return response;
