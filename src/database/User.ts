@@ -118,6 +118,21 @@ class User {
 
     return response;
   }
+
+  async delete(userHex: string) {
+    const deletedUser = await prisma.user.update({
+      where: { userHex },
+      data: { deleted: true },
+    });
+
+    const response = success({
+      status: 200,
+      message: "user successfully deleted",
+      data: deletedUser,
+    });
+
+    return response;
+  }
 }
 
 export default new User();

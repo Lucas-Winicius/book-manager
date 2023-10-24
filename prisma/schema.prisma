@@ -18,7 +18,7 @@ model User {
   favorites String[] @default([])
   admin     Boolean  @default(false)
   deleted   Boolean  @default(false)
-  userHex   String
+  userHex   String   @unique
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
