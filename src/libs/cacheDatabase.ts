@@ -1,12 +1,12 @@
 import { createClient } from "redis";
 
-const redis = createClient({
+const cacheDatabase = createClient({
   url: process.env.REDIS_URL,
 });
 
-redis.on("error", (err) => console.log("Redis Client Error", err));
-redis.on("connect", () => console.log("Redis connected"));
+cacheDatabase.on("error", (err) => console.log("Redis Client Error", err));
+cacheDatabase.on("connect", () => console.log("Redis connected"));
 
-redis.connect();
+cacheDatabase.connect();
 
-export default redis;
+export default cacheDatabase;

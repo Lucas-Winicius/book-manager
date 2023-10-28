@@ -4,9 +4,9 @@ type UserType = {
   nick: string;
   pass: string;
   favorites: string[];
+  likes: string[];
   admin: boolean;
   deleted: boolean;
-  userHex: string;
   createdAt?: string;
   updatedAt?: string;
 };

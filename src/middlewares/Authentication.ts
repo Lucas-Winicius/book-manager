@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jsonWebToken from "../libs/jsonWebToken";
+import jsonWebToken from "../libs/tokenGenerator";
 import { error } from "../libs/responses";
 
 function Authentication(req: Request, res: Response, next: NextFunction) {

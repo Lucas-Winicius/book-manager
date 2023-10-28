@@ -1,7 +1,8 @@
 import { Router } from "express";
+import userMethods from "./user";
 
 const routes = Router();
 
-routes.all("/", (req, res) => res.send("OK"));
+routes.use(userMethods);
 
 export default routes;
