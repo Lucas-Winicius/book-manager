@@ -1,4 +1,5 @@
 import UserType from "../@types/UserType";
+import cacheDatabase from "../libs/cacheDatabase";
 import database from "../libs/database";
 import { error, success } from "../libs/responses";
 
@@ -12,6 +13,12 @@ class User {
         message: "User created successfully.",
         data: createdUser,
       });
+
+      cacheDatabase.setEx(
+        `user:${createdUser.id}`,
+        7200,
+        JSON.stringify(createdUser),
+      );
 
       return response;
     } catch (e) {
